@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <!-- ===== VUE FORM TASK : AJOUT DES BOUTONS IA ===== -->
+    
+    <!-- Hériter de la vue form existante de Meryeme -->
+    <record id="view_task_form_ai_buttons" model="ir.ui.view">
+        <field name="name">task.manager.form.ai.buttons</field>
+        <field name="model">task.manager</field>
+        <field name="inherit_id" ref="task_manager.view_task_form"/>
+        <field name="arch" type="xml">
+            
+            <!-- Ajouter les boutons dans le header -->
+            <xpath expr="//form/header" position="inside">
+                
+                <!-- Bouton principal : Suggestions Complètes -->
+                <button name="action_generate_all_ai_suggestions"
+                        string="🤖 Suggestions Complètes IA"
+                        type="object"
+                        class="btn-primary"
+                        icon="fa-magic"
+                        help="Génère automatiquement : description, sous-tâches, durée et priorité"/>
+                
+                <!-- Bouton Description (visible si description vide) -->
+                <button name="action_generate_ai_description"
+                        string="💬 Générer Description"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-file-text-o"
+                        attrs="{'invisible': [('description', '!=', False)]}"
+                        help="Générer une description détaillée avec l'IA"/>
+                
+                <!-- Bouton Sous-tâches (visible si description existe) -->
+                <button name="action_generate_ai_subtasks"
+                        string="📋 Générer Sous-tâches"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-tasks"
+                        attrs="{'invisible': [('description', '=', False)]}"
+                        help="Générer des sous-tâches automatiquement"/>
+                
+                <!-- Bouton Estimation Durée -->
+                <button name="action_estimate_duration"
+                        string="⏱️ Estimer Durée"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-clock-o"
+                        help="Estimer la durée nécessaire avec l'IA"/>
+                
+                <!-- Bouton Suggestion Priorité -->
+                <button name="action_suggest_priority"
+                        string="🎯 Suggérer Priorité"
+                        type="object"
+                        class="btn-secondary"
+                        icon="fa-flag"
+                        help="L'IA suggère un niveau de priorité"/>
+                
+            </xpath>
+            
+            <!-- Ajouter un onglet "Historique IA" -->
+            <xpath expr="//notebook" position="inside">
+                <page string="🤖 Historique IA" name="ai_history">
+                    <group>
+                        <field name="ai_suggestion_count" readonly="1" string="Nombre de générations"/>
+                    </group>
+                    
+                    <field name="ai_history_ids" mode="tree" readonly="1">
+                        <tree>
+                            <field name="generation_date"/>
+                            <field name="generation_type"/>
+                            <field name="success"/>
+                            <field name="tokens_used"/>
+                            <field name="execution_time" string="Temps (s)"/>
+                            <field name="error_message" optional="hide"/>
+                        </tree>
+                    </field>
+                </page>
+            </xpath>
+            
+        </field>
+    </record>
+    
+    
+    <!-- ===== WIZARD DE CONFIGURATION IA ===== -->
+    <record id="view_ai_config_wizard_form" model="ir.ui.view">
+        <field name="name">task.ai.config.wizard.form</field>
+        <field name="model">task.ai.config.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Configuration de l'IA">
+                <group>
+                    <group>
+                        <field name="api_key" password="True" 
+                               placeholder="sk-ant-api03-xxxxx..."/>
+                        <field name="model_name"/>
+                    </group>
+                    <group>
+                        <field name="ai_enabled"/>
+                        <field name="daily_limit"/>
+                    </group>
+                </group>
+                
+                <div class="alert alert-info" role="alert">
+                    <strong>ℹ️ Comment obtenir votre clé API ?</strong><br/>
+                    1. Allez sur <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a><br/>
+                    2. Créez un compte ou connectez-vous<br/>
+                    3. Allez dans "API Keys"<br/>
+                    4. Créez une nouvelle clé<br/>
+                    5. Copiez-collez la clé ici
+                </div>
+                
+                <footer>
+                    <button name="action_test_and_save"
+                            string="🧪 Tester et Enregistrer"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_save_config"
+                            string="💾 Enregistrer sans tester"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    
+    <!-- ===== WIZARD CONFIRMATION PRIORITÉ ===== -->
+    <record id="view_task_priority_wizard_form" model="ir.ui.view">
+        <field name="name">task.priority.wizard.form</field>
+        <field name="model">task.priority.wizard</field>
+        <field name="arch" type="xml">
+            <form string="Suggestion de Priorité IA">
+                <group>
+                    <field name="task_id" readonly="1" invisible="1"/>
+                    <field name="current_priority" readonly="1"/>
+                    <field name="suggested_priority" readonly="1" widget="badge"/>
+                </group>
+                
+                <group>
+                    <field name="suggestion_reason" readonly="1" nolabel="1"/>
+                </group>
+                
+                <div class="alert alert-warning" role="alert" 
+                     attrs="{'invisible': [('suggested_priority', '!=', 'high')]}">
+                    <strong>⚠️ Attention !</strong><br/>
+                    L'IA recommande une priorité HAUTE pour cette tâche.
+                </div>
+                
+                <footer>
+                    <button name="action_accept_suggestion"
+                            string="✅ Accepter"
+                            type="object"
+                            class="btn-primary"/>
+                    <button name="action_reject_suggestion"
+                            string="❌ Refuser"
+                            type="object"
+                            class="btn-secondary"/>
+                    <button string="Annuler" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+    
+    
+    <!-- ===== MENU DE CONFIGURATION ===== -->
+    <record id="action_open_ai_config_wizard" model="ir.actions.act_window">
+        <field name="name">Configurer l'IA</field>
+        <field name="res_model">task.ai.config.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="target">new</field>
+    </record>
+    
+    <menuitem id="menu_ai_config"
+              name="Configuration IA"
+              parent="task_manager.menu_task_manager_root"
+              action="action_open_ai_config_wizard"
+              sequence="100"/>
+    
+    
+    <!-- ===== VUE HISTORIQUE IA ===== -->
+    <record id="view_task_ai_history_tree" model="ir.ui.view">
+        <field name="name">task.ai.history.tree</field>
+        <field name="model">task.ai.history</field>
+        <field name="arch" type="xml">
+            <tree decoration-success="success == True" 
+                  decoration-danger="success == False">
+                <field name="generation_date"/>
+                <field name="task_id"/>
+                <field name="generation_type"/>
+                <field name="success" widget="badge"/>
+                <field name="tokens_used"/>
+                <field name="execution_time"/>
+                <field name="model_used"/>
+            </tree>
+        </field>
+    </record>
+    
+    <record id="view_task_ai_history_form" model="ir.ui.view">
+        <field name="name">task.ai.history.form</field>
+        <field name="model">task.ai.history</field>
+        <field name="arch" type="xml">
+            <form string="Détails Génération IA">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="task_id"/>
+                            <field name="generation_type"/>
+                            <field name="generation_date"/>
+                            <field name="success"/>
+                        </group>
+                        <group>
+                            <field name="model_used"/>
+                            <field name="tokens_used"/>
+                            <field name="execution_time"/>
+                        </group>
+                    </group>
+                    
+                    <notebook>
+                        <page string="Prompt Envoyé">
+                            <field name="prompt_sent" widget="text"/>
+                        </page>
+                        <page string="Réponse Reçue" attrs="{'invisible': [('success', '=', False)]}">
+                            <field name="response_received" widget="text"/>
+                        </page>
+                        <page string="Erreur" attrs="{'invisible': [('success', '=', True)]}">
+                            <field name="error_message" widget="text"/>
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <record id="action_task_ai_history" model="ir.actions.act_window">
+        <field name="name">Historique IA</field>
+        <field name="res_model">task.ai.history</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+    
+    <menuitem id="menu_ai_history"
+              name="Historique IA"
+              parent="task_manager.menu_task_manager_root"
+              action="action_task_ai_history"
+              sequence="101"/>
+
+</odoo>
