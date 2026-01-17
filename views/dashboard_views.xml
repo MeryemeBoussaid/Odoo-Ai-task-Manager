@@ -1,0 +1,150 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ========================================== -->
+    <!-- VUE GRAPHIQUE : Répartition par État -->
+    <!-- ========================================== -->
+    <record id="view_task_graph_state" model="ir.ui.view">
+        <field name="name">task.manager.task.graph.state</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <graph string="Tâches par État" type="pie">
+                <field name="state"/>
+            </graph>
+        </field>
+    </record>
+    
+    <!-- Action pour graphique État -->
+    <record id="action_graph_state" model="ir.actions.act_window">
+        <field name="name">Répartition par État</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_task_graph_state"/>
+    </record>
+    
+    
+    <!-- ========================================== -->
+    <!-- VUE GRAPHIQUE : Répartition par Priorité -->
+    <!-- ========================================== -->
+    <record id="view_task_graph_priority" model="ir.ui.view">
+        <field name="name">task.manager.task.graph.priority</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <graph string="Tâches par Priorité" type="bar">
+                <field name="priority"/>
+            </graph>
+        </field>
+    </record>
+    
+    <!-- Action pour graphique Priorité -->
+    <record id="action_graph_priority" model="ir.actions.act_window">
+        <field name="name">Répartition par Priorité</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_task_graph_priority"/>
+    </record>
+    
+    
+    <!-- ========================================== -->
+    <!-- VUE GRAPHIQUE : Évolution dans le temps -->
+    <!-- ========================================== -->
+    <record id="view_task_graph_timeline" model="ir.ui.view">
+        <field name="name">task.manager.task.graph.timeline</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <graph string="Évolution des Tâches" type="line">
+                <field name="create_date" interval="day"/>
+            </graph>
+        </field>
+    </record>
+    
+    <!-- Action pour graphique Timeline -->
+    <record id="action_graph_timeline" model="ir.actions.act_window">
+        <field name="name">Évolution dans le temps</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">graph</field>
+        <field name="view_id" ref="view_task_graph_timeline"/>
+    </record>
+    
+    
+    <!-- ========================================== -->
+    <!-- VUE PIVOT : Tableau croisé dynamique -->
+    <!-- ========================================== -->
+    <record id="view_task_pivot" model="ir.ui.view">
+        <field name="name">task.manager.task.pivot</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <pivot string="Analyse des Tâches">
+                <field name="state" type="row"/>
+                <field name="priority" type="col"/>
+            </pivot>
+        </field>
+    </record>
+    
+    
+    <!-- ========================================== -->
+    <!-- VUE KANBAN DASHBOARD (Vue d'accueil) -->
+    <!-- ========================================== -->
+    <record id="view_task_dashboard_kanban" model="ir.ui.view">
+        <field name="name">task.manager.dashboard.kanban</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <kanban class="o_kanban_dashboard" default_group_by="state">
+                <field name="name"/>
+                <field name="state"/>
+                <field name="priority"/>
+                <field name="deadline"/>
+                <field name="user_id"/>
+                <field name="is_overdue"/>
+                
+                <templates>
+                    <t t-name="card">
+                        <div class="oe_kanban_global_click">
+                            <div class="oe_kanban_content">
+                                <div class="o_kanban_record_top">
+                                    <div class="o_kanban_record_headings">
+                                        <strong class="o_kanban_record_title">
+                                            <field name="name"/>
+                                        </strong>
+                                    </div>
+                                    <div class="o_kanban_record_top_right">
+                                        <field name="priority" widget="priority"/>
+                                    </div>
+                                </div>
+                                <div class="o_kanban_record_body">
+                                    <field name="user_id" widget="many2one_avatar_user"/>
+                                </div>
+                                <div class="o_kanban_record_bottom">
+                                    <div class="oe_kanban_bottom_left">
+                                        <field name="deadline" widget="date"/>
+                                        <t t-if="record.is_overdue.raw_value">
+                                            <span class="badge badge-danger ms-1">En retard</span>
+                                        </t>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+    
+    
+    <!-- ACTION DASHBOARD PRINCIPAL -->
+    <!-- ========================================== -->
+    <record id="action_dashboard_main" model="ir.actions.act_window">
+        <field name="name">Tableau de Bord</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">kanban,graph,pivot</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Bienvenue sur votre Tableau de Bord !
+            </p>
+            <p>
+                Créez des tâches pour voir les statistiques.
+            </p>
+        </field>
+    </record>
+
+</odoo>

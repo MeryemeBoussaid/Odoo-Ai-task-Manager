@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- ========================================== -->
+    <!-- ACTIONS WINDOW -->
+    <!-- ========================================== -->
+    
+    <!-- Action : Toutes les tâches -->
+    <record id="action_task_all" model="ir.actions.act_window">
+        <field name="name">Toutes les Tâches</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucune tâche trouvée !
+            </p>
+            <p>
+                Cliquez sur "Créer" pour ajouter votre première tâche.
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action : Mes tâches -->
+    <record id="action_task_my" model="ir.actions.act_window">
+        <field name="name">Mes Tâches</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="domain">[('user_id', '=', uid)]</field>
+    </record>
+    
+    <!-- Action : Créer une tâche -->
+    <record id="action_task_create" model="ir.actions.act_window">
+        <field name="name">Créer une Tâche</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+    
+    <!-- Action : Membres d'équipe -->
+    <record id="action_team_member_all" model="ir.actions.act_window">
+        <field name="name">Membres d'Équipe</field>
+        <field name="res_model">task.manager.team.member</field>
+        <field name="view_mode">kanban,tree,form</field>
+        <field name="help" type="html">
+            <p class="o_view_nocontent_smiling_face">
+                Aucun membre d'équipe !
+            </p>
+        </field>
+    </record>
+    
+    <!-- Action : Ajouter un membre -->
+    <record id="action_team_member_create" model="ir.actions.act_window">
+        <field name="name">Ajouter un Membre</field>
+        <field name="res_model">task.manager.team.member</field>
+        <field name="view_mode">form</field>
+        <field name="target">current</field>
+    </record>
+    
+    
+    <!-- ========================================== -->
+    <!-- MENUS -->
+    <!-- ========================================== -->
+    
+    <!-- Menu racine : Task Manager -->
+    <menuitem 
+        id="menu_task_manager_root"
+        name="Task Manager"
+        action="action_dashboard_main"
+        sequence="10"/>
+    
+    <!-- Sous-menu : Tasks (parent) -->
+    <menuitem 
+        id="menu_task_manager_tasks"
+        name="Tâches"
+        parent="menu_task_manager_root"
+        sequence="1"/>
+    
+    <!-- Sous-menu : All Tasks -->
+    <menuitem 
+        id="menu_task_manager_tasks_all"
+        name="Toutes les Tâches"
+        parent="menu_task_manager_tasks"
+        action="action_task_all"
+        sequence="1"/>
+    
+    <!-- Sous-menu : My Tasks -->
+    <menuitem 
+        id="menu_task_manager_tasks_my"
+        name="Mes Tâches"
+        parent="menu_task_manager_tasks"
+        action="action_task_my"
+        sequence="2"/>
+    
+    <!-- Sous-menu : Create Task -->
+    <menuitem 
+        id="menu_task_manager_tasks_create"
+        name="Créer une Tâche"
+        parent="menu_task_manager_tasks"
+        action="action_task_create"
+        sequence="3"/>
+    
+    <!-- Sous-menu : Team (parent) -->
+    <menuitem 
+        id="menu_task_manager_team"
+        name="Équipe"
+        parent="menu_task_manager_root"
+        action="action_team_member_all"
+        sequence="2"/>
+    
+    <!-- Sous-menu : Team Members -->
+    <menuitem 
+        id="menu_task_manager_team_members"
+        name="Membres d'Équipe"
+        parent="menu_task_manager_team"
+        action="action_team_member_all"
+        sequence="1"/>
+    
+    <!-- Sous-menu : Add Member -->
+    <menuitem 
+        id="menu_task_manager_team_add"
+        name="Ajouter un Membre"
+        parent="menu_task_manager_team"
+        action="action_team_member_create"
+        sequence="2"/>
+
+</odoo>
