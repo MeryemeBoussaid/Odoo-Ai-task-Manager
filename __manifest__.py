@@ -23,18 +23,18 @@
     'depends': ['base', 'mail'],
     'data': [
         'security/ir.model.access.csv',
-        'views/menu_views.xml',
+        #'views/menu_views.xml',
         'views/task_views.xml',
         'views/team_member_views.xml',
-        'views/dashboard_views.xml',
+        #'views/dashboard_views.xml',
         'data/demo_data.xml',
     ],
-    'external_dependencies': {
-        'python': ['anthropic'],
-    },
-    'demo': [
-        'data/demo_data.xml',
-    ],
+    # 'external_dependencies': {
+    #     'python': ['anthropic'],
+    # },
+    # 'demo': [
+    #     'data/demo_data.xml',
+    # ],
     'installable': True,
     'application': True,
     'auto_install': False,

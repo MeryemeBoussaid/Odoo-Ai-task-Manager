@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <record id="view_team_member_form" model="ir.ui.view">
+        <field name="name">task.manager.team.member.form</field>
+        <field name="model">task.manager.team.member</field>
+        <field name="arch" type="xml">
+            <form string="Membre d'équipe">
+                <sheet>
+                    <field name="avatar" widget="image" class="oe_avatar"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="email"/>
+                        <field name="phone"/>
+                        <field name="role"/>
+                        <field name="joining_date"/>
+                        <field name="user_id"/>
+                        <field name="active"/>
+                    </group>
+                    <group string="Statistiques">
+                        <field name="task_count"/>
+                        <field name="task_new_count"/>
+                        <field name="task_in_progress_count"/>
+                        <field name="task_done_count"/>
+                        <field name="completion_rate" widget="progressbar"/>
+                    </group>
+                    <notebook>
+                        <page string="Tâches">
+                            <field name="task_ids">
+                                <list>
+                                    <field name="name"/>
+                                    <field name="state"/>
+                                </list>
+                            </field>
+                        </page>
+                    </notebook>
+                </sheet>
+                <div class="oe_chatter">
+                    <field name="message_follower_ids"/>
+                    <field name="message_ids"/>
+                </div>
+            </form>
+        </field>
+    </record>
+    
+    <record id="view_team_member_list" model="ir.ui.view">
+        <field name="name">task.manager.team.member.list</field>
+        <field name="model">task.manager.team.member</field>
+        <field name="arch" type="xml">
+            <list string="Membres">
+                <field name="name"/>
+                <field name="email"/>
+                <field name="role"/>
+                <field name="task_count"/>
+                <field name="completion_rate" widget="progressbar"/>
+            </list>
+        </field>
+    </record>
+    
+    <record id="action_team_member" model="ir.actions.act_window">
+        <field name="name">Membres d'équipe</field>
+        <field name="res_model">task.manager.team.member</field>
+        <field name="view_mode">list,form</field>
+    </record>
+    
+</odoo>

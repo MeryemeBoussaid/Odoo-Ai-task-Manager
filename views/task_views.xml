@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    
+    <!-- VUE FORM -->
+    <record id="view_task_manager_task_form" model="ir.ui.view">
+        <field name="name">task.manager.task.form</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <form string="Tâche">
+                <header>
+                    <button name="action_start_task" string="Démarrer" type="object" 
+                            invisible="state != 'new'"/>
+                    <button name="action_complete_task" string="Terminer" type="object" 
+                            invisible="state != 'in_progress'"/>
+                    <button name="action_reset_task" string="Réinitialiser" type="object" 
+                            invisible="state != 'done'"/>
+                    <field name="state" widget="statusbar" statusbar_visible="new,in_progress,done"/>
+                </header>
+                <sheet>
+                    <field name="is_overdue" invisible="1"/>
+                    <group>
+                        <field name="name"/>
+                        <field name="priority"/>
+                        <field name="state"/>
+                        <field name="user_id"/>
+                        <field name="team_member_id"/>
+                        <field name="deadline"/>
+                        <field name="estimated_hours"/>
+                        <field name="description"/>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+    
+    <!-- VUE LIST -->
+    <record id="view_task_manager_task_list" model="ir.ui.view">
+        <field name="name">task.manager.task.list</field>
+        <field name="model">task.manager.task</field>
+        <field name="arch" type="xml">
+            <list string="Tâches">
+                <field name="name"/>
+                <field name="priority"/>
+                <field name="deadline"/>
+                <field name="state"/>
+            </list>
+        </field>
+    </record>
+    
+    <!-- ACTION WINDOW -->
+    <record id="action_task_manager_task" model="ir.actions.act_window">
+        <field name="name">Tâches</field>
+        <field name="res_model">task.manager.task</field>
+        <field name="view_mode">list,form</field>
+    </record>
+
+</odoo>

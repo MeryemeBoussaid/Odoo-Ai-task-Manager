@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+        
+        <!-- Membre 1 : Développeur -->
+        <record id="team_member_1" model="task.manager.team.member">
+            <field name="name">Ahmed Alami</field>
+            <field name="email">ahmed.alami@example.com</field>
+            <field name="phone">+212 6 12 34 56 78</field>
+            <field name="role">developer</field>
+            <field name="joining_date">2024-01-15</field>
+        </record>
+        
+        <!-- Membre 2 : Développeuse -->
+        <record id="team_member_2" model="task.manager.team.member">
+            <field name="name">Fatima Zahra Bennani</field>
+            <field name="email">fatima.bennani@example.com</field>
+            <field name="phone">+212 6 23 45 67 89</field>
+            <field name="role">developer</field>
+            <field name="joining_date">2024-02-01</field>
+        </record>
+        
+        <!-- Membre 3 : Designer -->
+        <record id="team_member_3" model="task.manager.team.member">
+            <field name="name">Youssef Idrissi</field>
+            <field name="email">youssef.idrissi@example.com</field>
+            <field name="phone">+212 6 34 56 78 90</field>
+            <field name="role">designer</field>
+            <field name="joining_date">2024-03-10</field>
+        </record>
+        
+        <!-- Membre 4 : Manager -->
+        <record id="team_member_4" model="task.manager.team.member">
+            <field name="name">Samira El Amrani</field>
+            <field name="email">samira.elamrani@example.com</field>
+            <field name="phone">+212 6 45 67 89 01</field>
+            <field name="role">manager</field>
+            <field name="joining_date">2023-12-01</field>
+        </record>
+        
+        <!-- Membre 5 : Testeur -->
+        <record id="team_member_5" model="task.manager.team.member">
+            <field name="name">Mehdi Tazi</field>
+            <field name="email">mehdi.tazi@example.com</field>
+            <field name="phone">+212 6 56 78 90 12</field>
+            <field name="role">tester</field>
+            <field name="joining_date">2024-04-01</field>
+        </record>
+        
+        <!-- Membre 6 : Testeuse -->
+        <record id="team_member_6" model="task.manager.team.member">
+            <field name="name">Salma Chraibi</field>
+            <field name="email">salma.chraibi@example.com</field>
+            <field name="phone">+212 6 67 89 01 23</field>
+            <field name="role">tester</field>
+            <field name="joining_date">2024-05-15</field>
+        </record>
+        
+    </data>
+</odoo>
