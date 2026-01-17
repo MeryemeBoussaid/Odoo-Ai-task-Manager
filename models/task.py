@@ -1,5 +1,10 @@
 # -*- coding: utf-8 -*-
-import anthropic
+try:
+    import anthropic
+    ANTHROPIC_AVAILABLE = True
+except ImportError:
+    ANTHROPIC_AVAILABLE = False
+    
 import logging
 import time
 import re

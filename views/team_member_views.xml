@@ -63,6 +63,7 @@
         <field name="model">task.manager.team.member</field>
         <field name="arch" type="xml">
             <kanban>
+                <field name="id"/>
                 <field name="name"/>
                 <field name="email"/>
                 <field name="role"/>
@@ -107,7 +108,7 @@
     <record id="action_team_member" model="ir.actions.act_window">
         <field name="name">Membres d'équipe</field>
         <field name="res_model">task.manager.team.member</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
     
 </odoo>

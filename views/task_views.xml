@@ -96,7 +96,7 @@
     <record id="action_task_manager_task" model="ir.actions.act_window">
         <field name="name">Tâches</field>
         <field name="res_model">task.manager.task</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">list,form</field>
     </record>
 
 </odoo>

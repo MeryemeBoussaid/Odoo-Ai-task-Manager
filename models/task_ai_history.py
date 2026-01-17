@@ -8,7 +8,7 @@ class TaskAIHistory(models.Model):
     _order = 'generation_date desc'
     
     task_id = fields.Many2one(
-        'task.manager',
+        'task.manager.task',
         string='Tâche',
         required=True,
         ondelete='cascade'

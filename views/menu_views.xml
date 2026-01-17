@@ -9,7 +9,7 @@
     <record id="action_task_all" model="ir.actions.act_window">
         <field name="name">Toutes les Tâches</field>
         <field name="res_model">task.manager.task</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Aucune tâche trouvée !
@@ -24,7 +24,7 @@
     <record id="action_task_my" model="ir.actions.act_window">
         <field name="name">Mes Tâches</field>
         <field name="res_model">task.manager.task</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="domain">[('user_id', '=', uid)]</field>
     </record>
     
@@ -40,7 +40,7 @@
     <record id="action_team_member_all" model="ir.actions.act_window">
         <field name="name">Membres d'Équipe</field>
         <field name="res_model">task.manager.team.member</field>
-        <field name="view_mode">kanban,tree,form</field>
+        <field name="view_mode">list,form</field>
         <field name="help" type="html">
             <p class="o_view_nocontent_smiling_face">
                 Aucun membre d'équipe !
@@ -53,6 +53,7 @@
         <field name="name">Ajouter un Membre</field>
         <field name="res_model">task.manager.team.member</field>
         <field name="view_mode">form</field>
+        <field name="view_id" ref="view_team_member_form"/>
         <field name="target">current</field>
     </record>
     
@@ -61,12 +62,19 @@
     <!-- MENUS -->
     <!-- ========================================== -->
     
-    <!-- Menu racine : Task Manager -->
+    <!-- MENU PRINCIPAL -->
     <menuitem 
         id="menu_task_manager_root"
         name="Task Manager"
-        action="action_dashboard_main"
         sequence="10"/>
+    
+    <!-- Sous-menu : Dashboard -->
+    <menuitem 
+        id="menu_task_manager_dashboard"
+        name="Dashboard"
+        parent="menu_task_manager_root"
+        action="action_dashboard_main"
+        sequence="0"/>
     
     <!-- Sous-menu : Tasks (parent) -->
     <menuitem 
@@ -102,7 +110,7 @@
     <!-- Sous-menu : Team (parent) -->
     <menuitem 
         id="menu_task_manager_team"
-        name="Équipe"
+        name=" Équipe"
         parent="menu_task_manager_root"
         action="action_team_member_all"
         sequence="2"/>
@@ -122,5 +130,12 @@
         parent="menu_task_manager_team"
         action="action_team_member_create"
         sequence="2"/>
+    
+    <!-- Sous-menu : Configuration -->
+    <menuitem 
+        id="menu_task_manager_config"
+        name="⚙️ Configuration"
+        parent="menu_task_manager_root"
+        sequence="99"/>
 
 </odoo>

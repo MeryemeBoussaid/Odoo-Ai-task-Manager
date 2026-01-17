@@ -37,7 +37,7 @@
     ],
     'assets': {
         'web.assets_backend': [
-            'ai_task_manager/static/src/css/dashboard.css',
+            # 'ai_task_manager/static/src/css/dashboard.css',
         ],
     },
     'installable': True,
