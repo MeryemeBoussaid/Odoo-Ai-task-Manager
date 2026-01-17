@@ -1,3 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_task_manager_task_user,task.manager.task.user,model_task_manager_task,base.group_user,1,1,1,1
 access_task_manager_team_member_user,task.manager.team.member.user,model_task_manager_team_member,base.group_user,1,1,1,1
+access_task_manager_user,task.manager.user,model_task_manager,base.group_user,1,1,1,1
+access_task_ai_config,task.ai.config,model_task_ai_config,base.group_user,1,1,1,0
+access_task_ai_history,task.ai.history,model_task_ai_history,base.group_user,1,1,1,1
+access_task_ai_config_wizard,task.ai.config.wizard,model_task_ai_config_wizard,base.group_user,1,1,1,1
+access_task_priority_wizard,task.priority.wizard,model_task_priority_wizard,base.group_user,1,1,1,1
