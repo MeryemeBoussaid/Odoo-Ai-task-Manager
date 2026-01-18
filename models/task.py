@@ -180,7 +180,7 @@ class TaskManagerTask(models.Model):
         Retourne: (response_text, tokens_used)
         """
         # Récupérer la clé API Gemini
-        api_key = config.get('gemini_api_key') or os.environ.get('GEMINI_API_KEY')
+        api_key = config.get('api_key') or os.environ.get('GEMINI_API_KEY')
         
         if not api_key:
             raise UserError(
@@ -196,7 +196,7 @@ class TaskManagerTask(models.Model):
         try:
             # Appeler Gemini
             genai.configure(api_key=api_key)
-            model = genai.GenerativeModel('gemini-1.5-flash')
+            model = genai.GenerativeModel('gemini-flash-latest')
             response = model.generate_content(prompt)
             return (response.text, 0)
         except Exception as e:
@@ -254,12 +254,7 @@ Réponds en français, sans introduction ni conclusion."""
             
             return {
                 'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': '✅ Description générée !',
-                    'message': 'La description a été créée avec succès.',
-                    'type': 'success',
-                }
+                'tag': 'reload',
             }
             
         except Exception as e:
@@ -314,19 +309,8 @@ Exemple de format attendu :
         start_time = time.time()
         
         try:
-            # client = anthropic.Anthropic(api_key=config['api_key'])
-            
-            response = client.messages.create(
-                model=config['model'],
-                max_tokens=config['max_tokens'],
-                temperature=config['temperature'],
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
-            subtasks = response.content[0].text.strip()
+            # Utiliser Gemini via _call_ai
+            subtasks, tokens = self._call_ai(prompt, config)
             execution_time = time.time() - start_time
             
             self.write({'subtasks': subtasks})
@@ -337,20 +321,14 @@ Exemple de format attendu :
                 prompt=prompt,
                 response=subtasks,
                 success=True,
-                tokens=response.usage.input_tokens + response.usage.output_tokens,
+                tokens=tokens,
                 exec_time=execution_time,
-                model=config['model']
+                model='gemini-flash-latest'
             )
             
             return {
                 'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': '✅ Sous-tâches générées !',
-                    'message': f'{len(subtasks.split(chr(10)))} sous-tâches créées en {execution_time:.1f}s',
-                    'type': 'success',
-                    'sticky': False,
-                }
+                'tag': 'reload',
             }
             
         except Exception as e:
@@ -405,20 +383,10 @@ Ne mets AUCUN texte avant ou après le nombre."""
         
         start_time = time.time()
         
+        
         try:
-            # client = anthropic.Anthropic(api_key=config['api_key'])
-            
-            response = client.messages.create(
-                model=config['model'],
-                max_tokens=50,
-                temperature=0.3,  # Moins créatif pour les chiffres
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
-            response_text = response.content[0].text.strip()
+            # Utiliser Gemini via _call_ai
+            response_text, tokens = self._call_ai(prompt, config)
             
             # Extraire le nombre de la réponse
             match = re.search(r'(\d+\.?\d*)', response_text)
@@ -441,9 +409,9 @@ Ne mets AUCUN texte avant ou après le nombre."""
                 prompt=prompt,
                 response=response_text,
                 success=True,
-                tokens=response.usage.input_tokens + response.usage.output_tokens,
+                tokens=tokens,
                 exec_time=execution_time,
-                model=config['model']
+                model='gemini-flash-latest'
             )
             
             return {
@@ -511,19 +479,9 @@ Ne mets AUCUN autre texte."""
         start_time = time.time()
         
         try:
-            # client = anthropic.Anthropic(api_key=config['api_key'])
-            
-            response = client.messages.create(
-                model=config['model'],
-                max_tokens=20,
-                temperature=0.3,
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
-            suggested_priority = response.content[0].text.strip().lower()
+            # Utiliser Gemini via _call_ai
+            suggested_priority, tokens = self._call_ai(prompt, config)
+            suggested_priority = suggested_priority.strip().lower()
             
             # Validation
             if suggested_priority not in ['low', 'medium', 'high']:
@@ -537,24 +495,18 @@ Ne mets AUCUN autre texte."""
                 prompt=prompt,
                 response=suggested_priority,
                 success=True,
-                tokens=response.usage.input_tokens + response.usage.output_tokens,
+                tokens=tokens,
                 exec_time=execution_time,
                 model=config['model']
             )
             
-            # Créer un wizard pour demander confirmation
-            wizard = self.env['task.priority.wizard'].create({
-                'task_id': self.id,
-                'suggested_priority': suggested_priority,
-            })
+            
+            # Appliquer directement la priorité
+            self.write({'priority': suggested_priority})
             
             return {
-                'name': 'Suggestion de Priorité',
-                'type': 'ir.actions.act_window',
-                'res_model': 'task.priority.wizard',
-                'view_mode': 'form',
-                'res_id': wizard.id,
-                'target': 'new',
+                'type': 'ir.actions.client',
+                'tag': 'reload',
             }
             
         except Exception as e:

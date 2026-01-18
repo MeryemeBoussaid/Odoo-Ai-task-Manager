@@ -47,32 +47,34 @@ class AIConfig(models.TransientModel):
     @api.model
     def get_api_key(self):
         """
-        Récupère la clé API de manière sécurisée
+        Récupère la clé API Gemini de manière sécurisée
         Ordre de priorité :
-        1. Variable d'environnement CLAUDE_API_KEY
+        1. Variable d'environnement GEMINI_API_KEY
         2. Paramètre système ir.config_parameter
-        3. Fichier de configuration externe
         """
-        # 1. Variable d'environnement (RECOMMANDÉ)
-        api_key = os.environ.get('CLAUDE_API_KEY')
+        # 1. Variable d'environnement
+        api_key = os.environ.get('GEMINI_API_KEY')
         if api_key:
-            _logger.info('🔑 Clé API chargée depuis variable d\'environnement')
+            _logger.info('🔑 Clé API Gemini chargée depuis variable d\'environnement')
             return api_key
         
         # 2. Paramètre système Odoo
         IrConfigParam = self.env['ir.config_parameter'].sudo()
-        api_key = IrConfigParam.get_param('task_manager.claude_api_key')
+        api_key = IrConfigParam.get_param('task_manager.gemini_api_key')
         if api_key:
-            _logger.info('🔑 Clé API chargée depuis paramètres système')
+            _logger.info('🔑 Clé API Gemini chargée depuis paramètres système')
             return api_key
         
         # 3. Aucune clé trouvée
         raise UserError(
-            "❌ Clé API Claude non configurée !\n\n"
+            "❌ Clé API Gemini non configurée !\n\n"
             "Pour configurer :\n"
-            "1. Allez dans Paramètres > Technique > Paramètres système\n"
-            "2. Créez : task_manager.claude_api_key = votre_clé\n\n"
-            "OU définissez la variable d'environnement CLAUDE_API_KEY"
+            "1. Obtenez une clé GRATUITE sur:\n"
+            "   https://makersuite.google.com/app/apikey\n\n"
+            "2. Dans Odoo:\n"
+            "   Paramètres > Technique > Paramètres système\n"
+            "   Créez : task_manager.gemini_api_key = votre_clé\n\n"
+            "OU définissez la variable d'environnement GEMINI_API_KEY"
         )
     
     @api.model
