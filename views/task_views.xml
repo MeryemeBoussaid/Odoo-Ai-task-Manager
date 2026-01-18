@@ -18,16 +18,60 @@
                 </header>
                 <sheet>
                     <field name="is_overdue" invisible="1"/>
+                    
+                    <!-- Boutons IA -->
+                    <div class="oe_button_box" name="button_box">
+                        <button name="action_generate_ai_description" 
+                                string="🤖 Générer Description" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-magic"
+                                help="Générer automatiquement une description avec l'IA"/>
+                        <button name="action_generate_ai_subtasks" 
+                                string="📋 Générer Sous-tâches" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-list"
+                                help="Générer automatiquement des sous-tâches avec l'IA"/>
+                        <button name="action_estimate_duration" 
+                                string="⏱️ Estimer Durée" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-clock-o"
+                                help="Estimer automatiquement la durée avec l'IA"/>
+                        <button name="action_suggest_priority" 
+                                string="⚡ Suggérer Priorité" 
+                                type="object" 
+                                class="oe_stat_button" 
+                                icon="fa-exclamation-triangle"
+                                help="Suggérer automatiquement la priorité avec l'IA"/>
+                    </div>
+                    
                     <group>
-                        <field name="name"/>
-                        <field name="priority"/>
-                        <field name="state"/>
-                        <field name="user_id"/>
-                        <field name="team_member_id"/>
-                        <field name="deadline"/>
-                        <field name="estimated_hours"/>
-                        <field name="description"/>
+                        <group>
+                            <field name="name"/>
+                            <field name="priority"/>
+                            <field name="state"/>
+                            <field name="user_id"/>
+                        </group>
+                        <group>
+                            <field name="team_member_id"/>
+                            <field name="deadline"/>
+                            <field name="estimated_hours"/>
+                        </group>
                     </group>
+                    
+                    <notebook>
+                        <page string="Description">
+                            <field name="description" placeholder="Description de la tâche..."/>
+                        </page>
+                        <page string="Sous-tâches IA">
+                            <field name="subtasks" placeholder="Les sous-tâches générées par l'IA apparaîtront ici..."/>
+                        </page>
+                        <page string="Suggestions IA">
+                            <field name="ai_suggestions" readonly="1"/>
+                        </page>
+                    </notebook>
                 </sheet>
             </form>
         </field>

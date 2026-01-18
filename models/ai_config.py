@@ -104,10 +104,10 @@ class AIConfig(models.TransientModel):
     def test_connection(self):
         """Test la connexion à l'API Claude"""
         try:
-            import anthropic
+            # import anthropic
             api_key = self.get_api_key()
             
-            client = anthropic.Anthropic(api_key=api_key)
+            # client = anthropic.Anthropic(api_key=api_key)
             
             # Test simple
             response = client.messages.create(

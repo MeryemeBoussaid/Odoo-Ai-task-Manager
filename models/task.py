@@ -1,18 +1,16 @@
 # -*- coding: utf-8 -*-
-try:
-    import anthropic
-    ANTHROPIC_AVAILABLE = True
-except ImportError:
-    ANTHROPIC_AVAILABLE = False
-    
+# Import Google Gemini directement
+import google.generativeai as genai
 import logging
 import time
 import re
+import os
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError, UserError
 from datetime import date
 
 _logger = logging.getLogger(__name__)
+_logger.info("✅ Module task.py chargé - Gemini importé")
 
 
 class TaskManagerTask(models.Model):
@@ -176,6 +174,35 @@ class TaskManagerTask(models.Model):
     
     # ========== MÉTHODES IA ==========
     
+    def _call_ai(self, prompt, config):
+        """
+        Appelle l'API Google Gemini (100% gratuit)
+        Retourne: (response_text, tokens_used)
+        """
+        # Récupérer la clé API Gemini
+        api_key = config.get('gemini_api_key') or os.environ.get('GEMINI_API_KEY')
+        
+        if not api_key:
+            raise UserError(
+                "❌ Clé API Gemini non configurée!\n\n"
+                "1. Obtenez une clé GRATUITE:\n"
+                "   https://makersuite.google.com/app/apikey\n\n"
+                "2. Dans Odoo:\n"
+                "   Paramètres → Technique → Paramètres système\n"
+                "   Créez: task_manager.gemini_api_key\n\n"
+                "3. Redémarrez et testez!"
+            )
+        
+        try:
+            # Appeler Gemini
+            genai.configure(api_key=api_key)
+            model = genai.GenerativeModel('gemini-1.5-flash')
+            response = model.generate_content(prompt)
+            return (response.text, 0)
+        except Exception as e:
+            _logger.error(f"Erreur Gemini: {e}")
+            raise UserError(f"❌ Erreur Gemini: {str(e)}")
+    
     def action_generate_ai_description(self):
         """
         Génère automatiquement une description détaillée basée sur le titre
@@ -196,33 +223,18 @@ class TaskManagerTask(models.Model):
         # Préparer le prompt
         prompt = f"""Tu es un assistant de gestion de projet professionnel.
 Titre de la tâche : {self.name}
-
 Génère une description professionnelle et détaillée de cette tâche qui explique :
 1. L'objectif principal
 2. Les étapes à suivre
 3. Les résultats attendus
-
 Sois concis mais complet (maximum 200 mots).
 Réponds en français, sans introduction ni conclusion."""
         
         start_time = time.time()
         
         try:
-            # Appel à l'API Claude
-            client = anthropic.Anthropic(api_key=config['api_key'])
-            
-            response = client.messages.create(
-                model=config['model'],
-                max_tokens=config['max_tokens'],
-                temperature=config['temperature'],
-                messages=[{
-                    "role": "user",
-                    "content": prompt
-                }]
-            )
-            
-            # Extraire la réponse
-            description = response.content[0].text.strip()
+            # Utiliser Gemini via _call_ai
+            description, tokens = self._call_ai(prompt, config)
             execution_time = time.time() - start_time
             
             # Mettre à jour la tâche
@@ -235,9 +247,9 @@ Réponds en français, sans introduction ni conclusion."""
                 prompt=prompt,
                 response=description,
                 success=True,
-                tokens=response.usage.input_tokens + response.usage.output_tokens,
+                tokens=tokens,
                 exec_time=execution_time,
-                model=config['model']
+                model='gemini-pro'
             )
             
             return {
@@ -245,45 +257,26 @@ Réponds en français, sans introduction ni conclusion."""
                 'tag': 'display_notification',
                 'params': {
                     'title': '✅ Description générée !',
-                    'message': f'La description a été générée avec succès en {execution_time:.1f}s',
+                    'message': 'La description a été créée avec succès.',
                     'type': 'success',
-                    'sticky': False,
                 }
             }
             
         except Exception as e:
-            error_msg = str(e)
-            _logger.error(f"Erreur lors de la génération de description : {error_msg}")
+            _logger.error(f"Erreur génération description: {e}")
             
-            # Logger l'erreur
+            # Logger l'échec
             self.env['task.ai.history'].create_log(
                 task_id=self.id,
                 generation_type='description',
                 prompt=prompt,
+                response='',
                 success=False,
-                error=error_msg,
-                exec_time=time.time() - start_time,
-                model=config.get('model', '')
+                error=str(e),
+                exec_time=time.time() - start_time
             )
             
-            # Messages d'erreur spécifiques
-            if 'authentication' in error_msg.lower() or 'api_key' in error_msg.lower():
-                message = "Clé API invalide. Vérifiez votre configuration."
-            elif 'quota' in error_msg.lower() or 'rate_limit' in error_msg.lower():
-                message = "Quota API dépassé. Réessayez plus tard."
-            else:
-                message = f"Erreur : {error_msg}"
-            
-            return {
-                'type': 'ir.actions.client',
-                'tag': 'display_notification',
-                'params': {
-                    'title': '❌ Erreur de génération',
-                    'message': message,
-                    'type': 'danger',
-                    'sticky': True,
-                }
-            }
+            raise UserError(f"❌ Erreur de génération. Erreur : {str(e)}")
     
     def action_generate_ai_subtasks(self):
         """
@@ -321,7 +314,7 @@ Exemple de format attendu :
         start_time = time.time()
         
         try:
-            client = anthropic.Anthropic(api_key=config['api_key'])
+            # client = anthropic.Anthropic(api_key=config['api_key'])
             
             response = client.messages.create(
                 model=config['model'],
@@ -413,7 +406,7 @@ Ne mets AUCUN texte avant ou après le nombre."""
         start_time = time.time()
         
         try:
-            client = anthropic.Anthropic(api_key=config['api_key'])
+            # client = anthropic.Anthropic(api_key=config['api_key'])
             
             response = client.messages.create(
                 model=config['model'],
@@ -518,7 +511,7 @@ Ne mets AUCUN autre texte."""
         start_time = time.time()
         
         try:
-            client = anthropic.Anthropic(api_key=config['api_key'])
+            # client = anthropic.Anthropic(api_key=config['api_key'])
             
             response = client.messages.create(
                 model=config['model'],
